@@ -51,19 +51,19 @@ namespace TrafficManager.Manager.Impl {
 		}
 
 		protected override void OnEnableFeatureInternal() {
-			
+
 		}
 
 		public ExtSoftPathState UpdateCitizenPathState(ushort citizenInstanceId, ref CitizenInstance citizenInstance, ref ExtCitizenInstance extInstance, ref Citizen citizen, ExtPathState mainPathState) {
 #if DEBUG
 			if (GlobalConfig.Instance.Debug.Switches[4])
-				Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}) called.");
+				Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}.");
 #endif
 			if (mainPathState == ExtPathState.Calculating) {
 				// main path is still calculating, do not check return path
 #if DEBUG
 				if (GlobalConfig.Instance.Debug.Switches[4])
-					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): still calculating main path. returning CALCULATING.");
+					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. still calculating main path. returning CALCULATING.");
 #endif
 				return ExtCitizenInstance.ConvertPathStateToSoftPathState(mainPathState);
 			}
@@ -74,7 +74,7 @@ namespace TrafficManager.Manager.Impl {
 				// no citizen
 #if DEBUG
 				if (GlobalConfig.Instance.Debug.Switches[2])
-					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): no citizen found!");
+					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. no citizen found!");
 #endif
 				return ExtCitizenInstance.ConvertPathStateToSoftPathState(mainPathState);
 			}
@@ -83,7 +83,7 @@ namespace TrafficManager.Manager.Impl {
 				// main path failed or non-existing: reset return path
 #if DEBUG
 				if (GlobalConfig.Instance.Debug.Switches[2])
-					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): mainPathSate is None or Failed. Resetting instance and returning FAILED.");
+					Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. mainPathSate is None or Failed. Resetting instance and returning FAILED.");
 #endif
 
 				if (mainPathState == ExtPathState.Failed) {
@@ -106,21 +106,21 @@ namespace TrafficManager.Manager.Impl {
 					// no return path calculated: ignore
 #if DEBUG
 					if (GlobalConfig.Instance.Debug.Switches[2])
-						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): return path state is None. Ignoring and returning main path state.");
+						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. return path state is None. Ignoring and returning main path state.");
 #endif
 					break;
 				case ExtPathState.Calculating: // OK
 											   // return path not read yet: wait for it
 #if DEBUG
 					if (GlobalConfig.Instance.Debug.Switches[4])
-						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): return path state is still calculating.");
+						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. return path state is still calculating.");
 #endif
 					return ExtSoftPathState.Calculating;
 				case ExtPathState.Failed: // OK
 										  // no walking path from parking position to target found. flag main path as 'failed'.
 #if DEBUG
 					if (GlobalConfig.Instance.Debug.Switches[2])
-						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): Return path FAILED.");
+						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}. Return path FAILED.");
 #endif
 					success = false;
 					break;
@@ -128,7 +128,7 @@ namespace TrafficManager.Manager.Impl {
 					// handle valid return path
 #if DEBUG
 					if (GlobalConfig.Instance.Debug.Switches[4])
-						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}, ..., {mainPathState}): Path is READY.");
+						Log._Debug($"AdvancedParkingManager.UpdateCitizenPathState({citizenInstanceId}): mainPathState={mainPathState}). Path is READY.");
 #endif
 					break;
 			}
@@ -427,7 +427,7 @@ namespace TrafficManager.Manager.Impl {
 			}
 
 
-			
+
 			// check if path is complete
 			PathUnit.Position pos;
 			if (instanceData.m_pathPositionIndex != 255 && (instanceData.m_path == 0 || !CustomPathManager._instance.m_pathUnits.m_buffer[instanceData.m_path].GetPosition(instanceData.m_pathPositionIndex >> 1, out pos))) {
@@ -502,7 +502,7 @@ namespace TrafficManager.Manager.Impl {
 					 * when using public transport together with a car (assuming a "source -> walk -> drive -> walk -> use public transport -> walk -> target" path)
 					 * discard parking space information since the cim has to park near the public transport stop
 					 * (instead of parking in the vicinity of the target building).
-					 * 
+					 *
 					 * TODO we could check if the path looks like "source -> walk -> use public transport -> walk -> drive -> [walk ->] target" (in this case parking space information would still be valid)
 					*/
 #if DEBUG

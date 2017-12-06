@@ -27,7 +27,7 @@ namespace TrafficManager.Custom.AI {
 		public bool ExtStartPathFind(ushort instanceID, ref CitizenInstance citizenData, ref ExtCitizenInstance extInstance, Vector3 startPos, Vector3 endPos, VehicleInfo vehicleInfo) {
 #if DEBUG
 			if (GlobalConfig.Instance.Debug.Switches[2])
-				Log.Warning($"CustomCitizenAI.ExtStartPathFind({instanceID}): called for citizen instance {instanceID}, citizen {citizenData.m_citizen}, startPos={startPos}, endPos={endPos}, sourceBuilding={citizenData.m_sourceBuilding}, targetBuilding={citizenData.m_targetBuilding}, pathMode={extInstance.pathMode}");
+				Log.Warning($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID}, citizen {citizenData.m_citizen}, startPos={startPos}, endPos={endPos}, sourceBuilding={citizenData.m_sourceBuilding}, targetBuilding={citizenData.m_targetBuilding}, pathMode={extInstance.pathMode}");
 #endif
 
 			// NON-STOCK CODE START
@@ -48,7 +48,7 @@ namespace TrafficManager.Custom.AI {
 						case ExtPathMode.ApproachingParkedCar:
 #if DEBUG
 							if (GlobalConfig.Instance.Debug.Switches[2])
-								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} has CurrentPathMode={extInstance.pathMode}. Switching to 'CalculatingWalkingPathToParkedCar'.");
+								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} has CurrentPathMode={extInstance.pathMode}. Change to 'CalculatingWalkingPathToParkedCar'.");
 #endif
 							extInstance.pathMode = ExtPathMode.CalculatingWalkingPathToParkedCar;
 							break;
@@ -70,7 +70,7 @@ namespace TrafficManager.Custom.AI {
 						case ExtPathMode.CalculatingCarPathToTarget:
 #if DEBUG
 							if (GlobalConfig.Instance.Debug.Switches[2])
-								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} has CurrentPathMode={extInstance.pathMode}.  Change to 'RequiresCarPath'.");
+								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} has CurrentPathMode={extInstance.pathMode}. Change to 'RequiresCarPath'.");
 #endif
 							extInstance.pathMode = ExtPathMode.RequiresCarPath;
 							break;
