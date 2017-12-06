@@ -202,7 +202,7 @@ namespace TrafficManager.Traffic.Data {
 		public float lastDistanceToParkedCar;
 
 		public override string ToString() {
-			return $"[ExtCitizenInstance\n" +
+			return $"\n[ExtCitizenInstance\n" +
 				"\t" + $"instanceId = {instanceId}\n" +
 				"\t" + $"pathMode = {pathMode}\n" +
 				"\t" + $"failedParkingAttempts = {failedParkingAttempts}\n" +

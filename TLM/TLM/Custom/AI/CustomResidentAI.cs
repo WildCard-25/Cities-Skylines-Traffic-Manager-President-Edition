@@ -53,7 +53,7 @@ namespace TrafficManager.Custom.AI {
 							target = InstanceID.Empty;
 							return Locale.Get("CITIZEN_STATUS_DRIVINGTO_OUTSIDE");
 						}
-						
+
 						if (targetBuilding == homeId) {
 							target = InstanceID.Empty;
 							return Locale.Get("CITIZEN_STATUS_DRIVINGTO_HOME");

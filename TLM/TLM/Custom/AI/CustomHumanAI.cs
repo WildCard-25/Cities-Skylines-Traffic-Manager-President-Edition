@@ -43,7 +43,7 @@ namespace TrafficManager.Custom.AI {
 
 #if DEBUG
 				if (GlobalConfig.Instance.Debug.Switches[2])
-					Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Path: {instanceData.m_path}, mainPathState={mainPathState}");
+					Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Path={instanceData.m_path}, mainPathState={mainPathState}");
 #endif
 
 				ExtSoftPathState finalPathState = ExtSoftPathState.None;
@@ -55,7 +55,7 @@ namespace TrafficManager.Custom.AI {
 						finalPathState = AdvancedParkingManager.Instance.UpdateCitizenPathState(instanceID, ref instanceData, ref ExtCitizenInstanceManager.Instance.ExtInstances[instanceID], ref ExtCitizenManager.Instance.ExtCitizens[citizenId], ref Singleton<CitizenManager>.instance.m_citizens.m_buffer[instanceData.m_citizen], mainPathState);
 #if DEBUG
 						if (GlobalConfig.Instance.Debug.Switches[2])
-							Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Applied Parking AI logic. Path: {instanceData.m_path}, mainPathState={mainPathState}, finalPathState={finalPathState}, extCitizenInstance={ExtCitizenInstanceManager.Instance.ExtInstances[instanceID]}");
+							Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Applied Parking AI logic. Path={instanceData.m_path}, mainPathState={mainPathState}, finalPathState={finalPathState}, extCitizenInstance={ExtCitizenInstanceManager.Instance.ExtInstances[instanceID]}");
 #endif
 					}
 #if BENCHMARK
@@ -229,7 +229,7 @@ namespace TrafficManager.Custom.AI {
 		public static bool EnterParkedCar(ushort instanceID, ref CitizenInstance instanceData, ushort parkedVehicleId, out ushort vehicleId) {
 #if DEBUG
 			if (GlobalConfig.Instance.Debug.Switches[2])
-				Log._Debug($"CustomHumanAI.EnterParkedCar({instanceID}, ..., {parkedVehicleId}) called.");
+				Log._Debug($"CustomHumanAI.EnterParkedCar({instanceID}): parkedVehicleId={parkedVehicleId})");
 #endif
 			VehicleManager vehManager = Singleton<VehicleManager>.instance;
 			NetManager netManager = Singleton<NetManager>.instance;
