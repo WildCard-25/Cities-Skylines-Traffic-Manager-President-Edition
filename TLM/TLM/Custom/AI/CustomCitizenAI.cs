@@ -85,6 +85,40 @@ namespace TrafficManager.Custom.AI {
 
 					// pathMode is now either CalculatingWalkingPathToParkedCar, CalculatingWalkingPathToTarget, RequiresCarPath or None.
 
+					if (parkedVehicleId != 0 && extInstance.pathMode != ExtCitizenInstance.ExtPathMode.CalculatingWalkingPathToTarget) {
+						// Reuse parked vehicle info
+						VehicleParked vehicleParked = Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId];
+						vehicleInfo = vehicleParked.Info;
+
+						// Does citizen need to move their car
+						if (extInstance.pathMode != ExtCitizenInstance.ExtPathMode.RequiresCarPath) {
+							// Citizen may use their car if they want to
+							carUsageMode = CarUsagePolicy.Allowed;
+
+							// Is citizen going home
+							ushort homeId = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenData.m_citizen].m_homeBuilding;
+							if (homeId != 0 && citizenData.m_targetBuilding == homeId) {
+								// Check distance between home and parked car. If too far away: force citizen to take the car back home
+								float distHomeToParked = (vehicleParked.m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
+								if (distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
+									// Force citizen to go to car first, using public transport if required
+									extInstance.pathMode = ExtCitizenInstance.ExtPathMode.CalculatingWalkingPathToParkedCar;
+#if DEBUG
+									if (GlobalConfig.Instance.Debug.Switches[2])
+										Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to go to parkedVehicleId={parkedVehicleId}. distHomeToParked={distHomeToParked}");
+#endif
+								}
+							}
+						} else {
+							// Citizen has reached their car, force them to drive it
+							carUsageMode = CarUsagePolicy.Forced;
+#if DEBUG
+							if (GlobalConfig.Instance.Debug.Switches[2])
+								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to move parkedVehicleId={parkedVehicleId} towards home.");
+#endif
+						}
+					}
+
 					if (extInstance.pathMode == ExtPathMode.CalculatingWalkingPathToParkedCar || extInstance.pathMode == ExtPathMode.CalculatingWalkingPathToTarget) {
 						// vehicle must not be used since we need a walking path
 						vehicleInfo = null;
@@ -106,27 +140,6 @@ namespace TrafficManager.Custom.AI {
 #endif
 							}
 						}
-					} else if (parkedVehicleId != 0) {
-						// reuse parked vehicle info
-						vehicleInfo = Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId].Info;
-						carUsageMode = CarUsagePolicy.Allowed;
-
-						ushort homeId = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenData.m_citizen].m_homeBuilding;
-						if (homeId != 0 && citizenData.m_targetBuilding == homeId) {
-							// check distance between home and parked car. if too far away: force to take the car back home
-							float distHomeToParked = (Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId].m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
-
-							if (distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
-								// force to take car back home
-#if DEBUG
-								if (GlobalConfig.Instance.Debug.Switches[2])
-									Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to move parkedVehicleId={parkedVehicleId} towards home. distHomeToParked={distHomeToParked}");
-#endif
-								carUsageMode = CarUsagePolicy.Forced;
-							}
-						}
-					} else {
-						carUsageMode = CarUsagePolicy.Allowed;
 					}
 				}
 #if BENCHMARK
@@ -186,7 +199,6 @@ namespace TrafficManager.Custom.AI {
 				}
 			}
 			NetInfo.LaneType startLaneType = laneTypes;
-			PathUnit.Position vehiclePosition = default(PathUnit.Position);
 
 			// NON-STOCK CODE START
 			if (Options.prohibitPocketCars) {
@@ -280,6 +292,7 @@ namespace TrafficManager.Custom.AI {
 			}
 
 			// NON-STOCK CODE END
+			PathUnit.Position vehiclePosition = default(PathUnit.Position);
 
 			if (parkedVehicleId != 0 && canUseOwnPassengerCar) {
 				Vector3 position = Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId].m_position;
