@@ -841,7 +841,7 @@ namespace TrafficManager.Manager.Impl {
 #endif
 
 			// update demands
-			if (instanceData.m_targetBuilding != 0) {
+			if (instanceData.m_targetBuilding != 0 && instanceData.m_targetBuilding != instanceData.m_sourceBuilding) {
 				switch (extInstance.pathMode) {
 					case ExtPathMode.None:
 					case ExtPathMode.CalculatingWalkingPathToTarget:
