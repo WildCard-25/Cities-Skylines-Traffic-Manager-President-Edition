@@ -98,7 +98,7 @@ namespace TrafficManager.Custom.AI {
 							// Is citizen going home
 							ushort homeId = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenData.m_citizen].m_homeBuilding;
 							if (homeId != 0 && citizenData.m_targetBuilding == homeId) {
-								// Check distance between home and parked car. If too far away: force citizen to take the car back home
+								// Check distance between home and parked car. If too far away: force citizen to take their car back home
 								float distHomeToParked = (vehicleParked.m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
 								if (distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
 									// Force citizen to go to car first, using public transport if required
@@ -108,13 +108,39 @@ namespace TrafficManager.Custom.AI {
 										Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to go to parkedVehicleId={parkedVehicleId}. distHomeToParked={distHomeToParked}");
 #endif
 								}
+							// Don't force citizen to use their car if they are at home
+							} else if (homeId == 0 || citizenData.m_sourceBuilding != homeId) {
+								// Check if citizen parked their car nearby
+								BuildingManager buildingManager = Singleton<BuildingManager>.instance;
+								float distSourceToParked = (vehicleParked.m_position - buildingManager.m_buildings.m_buffer[citizenData.m_sourceBuilding].m_position).magnitude;
+								if (distSourceToParked <= GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding)
+								{
+									// Check if target is far enough away to drive to
+									float distTargetToParked = (vehicleParked.m_position - buildingManager.m_buildings.m_buffer[citizenData.m_targetBuilding].m_position).magnitude;
+									if (distTargetToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding) {
+										// Make sure car isn't parked near home
+										float distHomeToParked = 0.0f;
+										if (homeId != 0) {
+											distHomeToParked = (vehicleParked.m_position - buildingManager.m_buildings.m_buffer[homeId].m_position).magnitude;
+										}
+
+										if (homeId == 0 || distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
+											// Force citizen to go to car first, using public transport if required
+											extInstance.pathMode = ExtCitizenInstance.ExtPathMode.CalculatingWalkingPathToParkedCar;
+#if DEBUG
+											if (GlobalConfig.Instance.Debug.Switches[2])
+												Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to go to parkedVehicleId={parkedVehicleId}. distSourceToParked={distSourceToParked}, distTargetToParked={distTargetToParked}, distHomeToParked={distHomeToParked}");
+#endif
+										}
+									}
+								}
 							}
 						} else {
 							// Citizen has reached their car, force them to drive it
 							carUsageMode = CarUsagePolicy.Forced;
 #if DEBUG
 							if (GlobalConfig.Instance.Debug.Switches[2])
-								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to move parkedVehicleId={parkedVehicleId} towards home.");
+								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen instance {instanceID} will try to use parkedVehicleId={parkedVehicleId} to get to target={citizenData.m_targetBuilding}.");
 #endif
 						}
 					}
