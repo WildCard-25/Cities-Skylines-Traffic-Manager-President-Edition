@@ -65,12 +65,12 @@ namespace TrafficManager.Manager.Impl {
 
 		public override void OnLevelUnloading() {
 			base.OnLevelUnloading();
-			Reset();
+			Reset(false);
 		}
 
-		internal void Reset() {
+		internal void Reset(bool debugLog = true) {
 			for (int i = 0; i < ExtCitizens.Length; ++i) {
-				ExtCitizens[i].Reset();
+				ExtCitizens[i].Reset(debugLog);
 			}
 		}
 

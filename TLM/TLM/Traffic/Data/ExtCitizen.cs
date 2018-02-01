@@ -61,9 +61,9 @@ namespace TrafficManager.Traffic.Data {
 			return Constants.ServiceFactory.CitizenService.IsCitizenValid(citizenId);
 		}
 
-		internal void Reset() {
+		internal void Reset(bool debugLog = true) {
 #if DEBUG
-			if (GlobalConfig.Instance.Debug.Switches[4]) {
+			if (debugLog && GlobalConfig.Instance.Debug.Switches[4]) {
 				Log.Warning($"ExtCitizen.Reset({citizenId}): Resetting ext. citizen {citizenId}");
 			}
 #endif

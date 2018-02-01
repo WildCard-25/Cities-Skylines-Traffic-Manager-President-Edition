@@ -240,9 +240,9 @@ namespace TrafficManager.Traffic.Data {
 			return ret;
 		}
 
-		internal void Reset() {
+		internal void Reset(bool debugLog = true) {
 #if DEBUG
-			if (GlobalConfig.Instance.Debug.Switches[4]) {
+			if (debugLog && GlobalConfig.Instance.Debug.Switches[4]) {
 				Log.Warning($"ExtCitizenInstance.Reset({instanceId}): Resetting ext. citizen instance {instanceId}");
 			}
 #endif

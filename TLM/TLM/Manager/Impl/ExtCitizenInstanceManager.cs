@@ -37,7 +37,7 @@ namespace TrafficManager.Manager.Impl {
 		}
 
 		public void ResetInstance(ushort instanceId) {
-			ExtInstances[instanceId].Reset();
+			ExtInstances[instanceId].Reset(false);
 		}
 
 		private ExtCitizenInstanceManager() {
@@ -49,12 +49,12 @@ namespace TrafficManager.Manager.Impl {
 
 		public override void OnLevelUnloading() {
 			base.OnLevelUnloading();
-			Reset();
+			Reset(false);
 		}
 
-		internal void Reset() {
+		internal void Reset(bool debugLog = true) {
 			for (int i = 0; i < ExtInstances.Length; ++i) {
-				ExtInstances[i].Reset();
+				ExtInstances[i].Reset(debugLog);
 			}
 		}
 
