@@ -124,35 +124,17 @@ namespace TrafficManager.Custom.AI {
 						 * citizen travels back home
 						 * -> check if their car should be returned
 						 */
-						if ((extCitizen.lastTransportMode & ExtCitizen.ExtTransportMode.Car) != ExtCitizen.ExtTransportMode.None) {
+						float distHomeToParked = (Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId].m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
+
+						if (distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
 							/*
-							 * citizen travelled by car
-							 * -> return car back home
+							 * force to take car back home
 							 */
 							extInstance.pathMode = ExtCitizenInstance.ExtPathMode.CalculatingWalkingPathToParkedCar;
-
 #if DEBUG
 							if (GlobalConfig.Instance.Debug.Switches[4])
-								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen used their car before and is not at home. Forcing to walk to parked car.");
+								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen going home and parked car is too far from home ({distHomeToParked}). Forcing walking to parked car.");
 #endif
-						} else {
-							/*
-							 * citizen travelled by other means of transport
-							 * -> check distance between home and parked car. if too far away: force to take the car back home
-							 */
-							float distHomeToParked = (Singleton<VehicleManager>.instance.m_parkedVehicles.m_buffer[parkedVehicleId].m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
-
-							if (distHomeToParked > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
-								/*
-								 * force to take car back home
-								 */
-								extInstance.pathMode = ExtCitizenInstance.ExtPathMode.CalculatingWalkingPathToParkedCar;
-
-#if DEBUG
-								if (GlobalConfig.Instance.Debug.Switches[4])
-									Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen wants to go home and parked car is too far away ({distHomeToParked}). Forcing walking to parked car.");
-#endif
-							}
 						}
 					}
 
