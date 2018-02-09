@@ -36,7 +36,7 @@ namespace TrafficManager.State {
 
 		public override void OnReleased() {
 		}
-		
+
 		public override void OnLoadData() {
 			Log.Info("Loading Traffic Manager: PE Data");
 			StateLoading = true;
@@ -56,7 +56,7 @@ namespace TrafficManager.State {
 				Log.Error($"OnLoadData: Error while initializing NodeGeometry: {e.ToString()}");
 				loadingSucceeded = false;
 			}
-			
+
 			try {
 				Log.Info("Initializing segment geometries");
 				SegmentGeometry.OnBeforeLoadData();
@@ -106,7 +106,7 @@ namespace TrafficManager.State {
 			}
 
 			StateLoading = false;
-			
+
 			foreach (ICustomManager manager in LoadingExtension.RegisteredManagers) {
 				try {
 					Log.Info($"OnAfterLoadData: {manager.GetType().Name}");
@@ -156,15 +156,6 @@ namespace TrafficManager.State {
 			}
 
 			TrafficPriorityManager prioMan = TrafficPriorityManager.Instance;
-
-			// load ext. citizens
-			if (_configuration.ExtCitizens != null) {
-				if (!ExtCitizenManager.Instance.LoadData(_configuration.ExtCitizens)) {
-					error = true;
-				}
-			} else {
-				Log.Info("Ext. citizen data structure undefined!");
-			}
 
 			// load ext. citizen instances
 			if (_configuration.ExtCitizenInstances != null) {
@@ -318,7 +309,6 @@ namespace TrafficManager.State {
 
 				TrafficPriorityManager prioMan = TrafficPriorityManager.Instance;
 
-				configuration.ExtCitizens = ExtCitizenManager.Instance.SaveData(ref success);
 				configuration.ExtCitizenInstances = ExtCitizenInstanceManager.Instance.SaveData(ref success);
 
 				configuration.PrioritySegments = ((ICustomDataManager<List<int[]>>)TrafficPriorityManager.Instance).SaveData(ref success);
@@ -330,7 +320,7 @@ namespace TrafficManager.State {
 
 				//configuration.NodeTrafficLights = ((ICustomDataManager<string>)TrafficLightManager.Instance).SaveData(ref success);
 				//configuration.ToggledTrafficLights = ((ICustomDataManager<List<Configuration.NodeTrafficLight>>)TrafficLightManager.Instance).SaveData(ref success);
-				
+
 				configuration.LaneFlags = ((ICustomDataManager<string>)LaneArrowManager.Instance).SaveData(ref success);
 				configuration.LaneArrows = ((ICustomDataManager<List<Configuration.LaneArrowData>>)LaneArrowManager.Instance).SaveData(ref success);
 

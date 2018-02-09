@@ -49,14 +49,14 @@ namespace TrafficManager.UI {
 
 		public static ushort SelectedSegmentId { get; internal set; }
 
-        public static TransportDemandViewMode CurrentTransportDemandViewMode { get; internal set; } = TransportDemandViewMode.Outgoing;
+		public static TransportDemandViewMode CurrentTransportDemandViewMode { get; internal set; } = TransportDemandViewMode.Outgoing;
 
-        internal static ExtVehicleType[] InfoSignsToDisplay = new ExtVehicleType[] { ExtVehicleType.PassengerCar, ExtVehicleType.Bicycle, ExtVehicleType.Bus, ExtVehicleType.Taxi, ExtVehicleType.Tram, ExtVehicleType.CargoTruck, ExtVehicleType.Service, ExtVehicleType.RailVehicle };
+		internal static ExtVehicleType[] InfoSignsToDisplay = new ExtVehicleType[] { ExtVehicleType.PassengerCar, ExtVehicleType.Bicycle, ExtVehicleType.Bus, ExtVehicleType.Taxi, ExtVehicleType.Tram, ExtVehicleType.CargoTruck, ExtVehicleType.Service, ExtVehicleType.RailVehicle };
 
 		private static SubTool activeSubTool = null;
 
 		static TrafficManagerTool() {
-			
+
 		}
 
 		internal ToolController GetToolController() {
@@ -145,14 +145,14 @@ namespace TrafficManager.UI {
 			}
 			return null;
 		}
-		
+
 		public ToolMode GetToolMode() {
 			return _toolMode;
 		}
 
 		public void SetToolMode(ToolMode mode) {
 			Log._Debug($"SetToolMode: {mode}");
-			
+
 			bool toolModeChanged = (mode != _toolMode);
 			var oldToolMode = _toolMode;
 			SubTool oldSubTool = null;
@@ -357,7 +357,7 @@ namespace TrafficManager.UI {
 			Bezier3 bezier;
 			bezier.a = pos;
 			bezier.d = pos;
-			
+
 			NetSegment.CalculateMiddlePoints(bezier.a, segment.m_startDirection, bezier.d, segment.m_endDirection, false, false, out bezier.b, out bezier.c);
 
 			DrawOverlayBezier(cameraInfo, bezier, color, alpha);
@@ -631,16 +631,16 @@ namespace TrafficManager.UI {
 
 				/*if (oldHoveredNodeId != HoveredNodeId || oldHoveredSegmentId != HoveredSegmentId) {
 					Log._Debug($"*** Mouse ray @ node {HoveredNodeId}, segment {HoveredSegmentId}, toolMode={GetToolMode()}");
-                }*/
+				}*/
 
 				return (HoveredNodeId != 0 || HoveredSegmentId != 0);
 			} else {
 				//Log._Debug($"Mouse ray invalid: {UIView.IsInsideUI()} {Cursor.visible} {activeSubTool == null} {activeSubTool.IsCursorInPanel()}");
-            }
+			}
 
 			return mouseRayValid;
 		}
-		
+
 		/// <summary>
 		/// Displays lane ids over lanes
 		/// </summary>
@@ -649,7 +649,7 @@ namespace TrafficManager.UI {
 			Vector3 centerPos = segment.m_bounds.center;
 			Vector3 screenPos;
 			bool visible = WorldToScreenPoint(centerPos, out screenPos);
-			
+
 			if (! visible) {
 				return;
 			}
@@ -721,7 +721,7 @@ namespace TrafficManager.UI {
 
 				curLaneId = Singleton<NetManager>.instance.m_lanes.m_buffer[curLaneId].m_nextLane;
 			}
-			
+
 			Vector2 dim = _counterStyle.CalcSize(new GUIContent(labelStr));
 			Rect labelRect = new Rect(screenPos.x - dim.x / 2f, screenPos.y, dim.x, dim.y);
 
@@ -770,7 +770,7 @@ namespace TrafficManager.UI {
 				var diff = centerPos - camPos;
 				if (diff.magnitude > DebugCloseLod)
 					continue; // do not draw if too distant
-				
+
 				var zoom = 1.0f / diff.magnitude * 150f;
 
 				_counterStyle.fontSize = (int)(12f * zoom);
@@ -838,7 +838,7 @@ namespace TrafficManager.UI {
 		private void _guiNodes() {
 			GUIStyle _counterStyle = new GUIStyle();
 			Array16<NetNode> nodes = Singleton<NetManager>.instance.m_nodes;
-			
+
 			for (int i = 1; i < nodes.m_size; ++i) {
 				if ((nodes.m_buffer[i].m_flags & NetNode.Flags.Created) == NetNode.Flags.None) // node is unused
 					continue;
@@ -846,7 +846,7 @@ namespace TrafficManager.UI {
 				Vector3 pos = nodes.m_buffer[i].m_position;
 				Vector3 screenPos;
 				bool visible = WorldToScreenPoint(pos, out screenPos);
-				
+
 				if (! visible)
 					continue;
 
@@ -854,7 +854,7 @@ namespace TrafficManager.UI {
 				var diff = pos - camPos;
 				if (diff.magnitude > DebugCloseLod)
 					continue; // do not draw if too distant
-				
+
 				var zoom = 1.0f / diff.magnitude * 150f;
 
 				_counterStyle.fontSize = (int)(15f * zoom);
@@ -900,7 +900,7 @@ namespace TrafficManager.UI {
 				Vector3 vehPos = vehicle.GetSmoothPosition((ushort)i);
 				Vector3 screenPos;
 				bool visible = WorldToScreenPoint(vehPos, out screenPos);
-				
+
 				if (! visible)
 					continue;
 
@@ -955,7 +955,7 @@ namespace TrafficManager.UI {
 				Vector3 pos = citizenInstance.GetSmoothPosition((ushort)i);
 				Vector3 screenPos;
 				bool visible = WorldToScreenPoint(pos, out screenPos);
-				
+
 				if (! visible)
 					continue;
 
@@ -970,7 +970,7 @@ namespace TrafficManager.UI {
 				_counterStyle.normal.textColor = new Color(1f, 0f, 1f);
 				//_counterStyle.normal.background = MakeTex(1, 1, new Color(0f, 0f, 0f, 0.4f));
 
-				String labelStr = "Inst. " + i + ", Cit. " + citizenInstance.m_citizen + ",\nm: " + ExtCitizenInstanceManager.Instance.ExtInstances[i].pathMode.ToString() + ", tm: " + ExtCitizenManager.Instance.ExtCitizens[citizenInstance.m_citizen].transportMode + ", ltm: " + ExtCitizenManager.Instance.ExtCitizens[citizenInstance.m_citizen].lastTransportMode + ", ll: " + ExtCitizenManager.Instance.ExtCitizens[citizenInstance.m_citizen].lastLocation;
+				String labelStr = "Inst. " + i + ", Cit. " + citizenInstance.m_citizen + ", m: " + ExtCitizenInstanceManager.Instance.ExtInstances[i].pathMode.ToString();
 				if (citizenInstance.m_citizen != 0) {
 					Citizen citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenInstance.m_citizen];
 					if (citizen.m_parkedVehicle != 0) {
@@ -999,7 +999,7 @@ namespace TrafficManager.UI {
 				Vector3 pos = building.m_position;
 				Vector3 screenPos;
 				bool visible = WorldToScreenPoint(pos, out screenPos);
-				
+
 				if (! visible)
 					continue;
 
@@ -1069,7 +1069,7 @@ namespace TrafficManager.UI {
 
 			return numLanes;
 		}
-		
+
 		internal static void CalculateSegmentCenterByDir(ushort segmentId, Dictionary<NetInfo.Direction, Vector3> segmentCenterByDir) {
 			segmentCenterByDir.Clear();
 			NetManager netManager = Singleton<NetManager>.instance;

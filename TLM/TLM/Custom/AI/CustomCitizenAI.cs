@@ -21,10 +21,10 @@ namespace TrafficManager.Custom.AI {
 	public class CustomCitizenAI : CitizenAI {
 
 		public bool CustomStartPathFind(ushort instanceID, ref CitizenInstance citizenData, Vector3 startPos, Vector3 endPos, VehicleInfo vehicleInfo) {
-			return ExtStartPathFind(instanceID, ref citizenData, ref ExtCitizenInstanceManager.Instance.ExtInstances[instanceID], ref ExtCitizenManager.Instance.ExtCitizens[Singleton<CitizenManager>.instance.m_instances.m_buffer[instanceID].m_citizen], startPos, endPos, vehicleInfo);
+			return ExtStartPathFind(instanceID, ref citizenData, ref ExtCitizenInstanceManager.Instance.ExtInstances[instanceID], startPos, endPos, vehicleInfo);
 		}
 
-		public bool ExtStartPathFind(ushort instanceID, ref CitizenInstance instanceData, ref ExtCitizenInstance extInstance, ref ExtCitizen extCitizen, Vector3 startPos, Vector3 endPos, VehicleInfo vehicleInfo) {
+		public bool ExtStartPathFind(ushort instanceID, ref CitizenInstance instanceData, ref ExtCitizenInstance extInstance, Vector3 startPos, Vector3 endPos, VehicleInfo vehicleInfo) {
 #if DEBUG
 			if (GlobalConfig.Instance.Debug.Switches[2])
 				Log.Warning($"CustomCitizenAI.ExtStartPathFind({instanceID}): called for citizen {instanceData.m_citizen}, startPos={startPos}, endPos={endPos}, sourceBuilding={instanceData.m_sourceBuilding}, targetBuilding={instanceData.m_targetBuilding}, pathMode={extInstance.pathMode}");
@@ -54,7 +54,7 @@ namespace TrafficManager.Custom.AI {
 								extInstance.Reset();
 							} else {
 #if DEBUG
-								if (GlobalConfig.Instance.Debug.Switches[4])
+								if (GlobalConfig.Instance.Debug.Switches[2])
 									Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen has CurrentPathMode={extInstance.pathMode}.  Change to 'CalculatingWalkingPathToParkedCar'.");
 #endif
 								extInstance.pathMode = ExtPathMode.CalculatingWalkingPathToParkedCar;
@@ -64,7 +64,7 @@ namespace TrafficManager.Custom.AI {
 						case ExtPathMode.CalculatingWalkingPathToTarget:
 						case ExtPathMode.WalkingToTarget:
 #if DEBUG
-							if (GlobalConfig.Instance.Debug.Switches[4])
+							if (GlobalConfig.Instance.Debug.Switches[2])
 								Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen has CurrentPathMode={extInstance.pathMode}. Change to 'CalculatingWalkingPathToTarget'.");
 #endif
 							extInstance.pathMode = ExtPathMode.CalculatingWalkingPathToTarget;
@@ -85,7 +85,7 @@ namespace TrafficManager.Custom.AI {
 								extInstance.Reset();
 							} else {
 #if DEBUG
-								if (GlobalConfig.Instance.Debug.Switches[4])
+								if (GlobalConfig.Instance.Debug.Switches[2])
 									Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen has CurrentPathMode={extInstance.pathMode}.  Change to 'RequiresCarPath'.");
 #endif
 

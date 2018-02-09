@@ -217,31 +217,6 @@ namespace TrafficManager {
 					detourFailed = true;
 				}
 
-				Log.Info("Reverse-Redirection CustomCitizenManager::ReleaseCitizenImplementation calls");
-				try {
-					Detours.Add(new Detour(typeof(CustomCitizenManager).GetMethod("ReleaseCitizenImplementation",
-							BindingFlags.NonPublic | BindingFlags.Instance,
-							null,
-							new[]
-							{
-									typeof (uint),
-									typeof (Citizen).MakeByRefType(),
-							},
-							null),
-							typeof(CitizenManager).GetMethod("ReleaseCitizenImplementation",
-								BindingFlags.NonPublic | BindingFlags.Instance,
-								null,
-								new[]
-								{
-									typeof (uint),
-									typeof (Citizen).MakeByRefType(),
-								},
-								null)));
-				} catch (Exception) {
-					Log.Error("Could not reverse-redirect CustomCitizenManager::ReleaseCitizenImplementation");
-					detourFailed = true;
-				}
-
 				Log.Info("Reverse-Redirection ResidentAI::GetTaxiProbability calls");
 				try {
 					Detours.Add(new Detour(typeof(CustomResidentAI).GetMethod("GetTaxiProbability",
@@ -387,6 +362,33 @@ namespace TrafficManager {
 							typeof(TouristAI).GetMethod("GetElectricCarProbability", BindingFlags.NonPublic | BindingFlags.Instance)));
 				} catch (Exception) {
 					Log.Error("Could not reverse-redirect TouristAI::GetElectricCarProbability");
+					detourFailed = true;
+				}
+
+				Log.Info("Reverse-Redirection HumanAI::ArriveAtDestination calls");
+				try {
+					Detours.Add(new Detour(typeof(CustomHumanAI).GetMethod("ArriveAtDestination",
+							BindingFlags.NonPublic | BindingFlags.Instance,
+							null,
+							new[]
+							{
+									typeof (ushort),
+									typeof (CitizenInstance).MakeByRefType(),
+									typeof (bool)
+							},
+							null),
+							typeof(HumanAI).GetMethod("ArriveAtDestination",
+								BindingFlags.NonPublic | BindingFlags.Instance,
+								null,
+								new[]
+								{
+									typeof (ushort),
+									typeof (CitizenInstance).MakeByRefType(),
+									typeof (bool)
+								},
+								null)));
+				} catch (Exception) {
+					Log.Error("Could not reverse-redirect HumanAI::ArriveAtDestination");
 					detourFailed = true;
 				}
 
@@ -1272,22 +1274,6 @@ namespace TrafficManager {
 					detourFailed = true;
 				}
 
-				Log.Info("Redirection CitizenManager::ReleaseCitizen calls");
-				try {
-					Detours.Add(new Detour(typeof(CitizenManager).GetMethod("ReleaseCitizen",
-							BindingFlags.Public | BindingFlags.Instance,
-							null,
-							new[]
-							{
-									typeof (uint)
-							},
-							null),
-							typeof(CustomCitizenManager).GetMethod("CustomReleaseCitizen")));
-				} catch (Exception) {
-					Log.Error("Could not redirect CitizenManager::ReleaseCitizen");
-					detourFailed = true;
-				}
-
 				Log.Info("Redirection VehicleManager::ReleaseVehicle calls");
 				try {
 					Detours.Add(new Detour(typeof(VehicleManager).GetMethod("ReleaseVehicle",
@@ -1492,32 +1478,6 @@ namespace TrafficManager {
 							typeof(CustomHumanAI).GetMethod("CustomCheckTrafficLights")));
 				} catch (Exception) {
 					Log.Error("Could not redirect HumanAI::CheckTrafficLights.");
-					detourFailed = true;
-				}
-
-				Log.Info("Redirecting HumanAI::ArriveAtDestination Calls");
-				try {
-					Detours.Add(new Detour(typeof(HumanAI).GetMethod("ArriveAtDestination",
-							BindingFlags.NonPublic | BindingFlags.Instance,
-							null,
-							new[] {
-								typeof (ushort),
-								typeof (CitizenInstance).MakeByRefType(),
-								typeof (bool)
-							},
-							null),
-							typeof(CustomHumanAI).GetMethod("CustomArriveAtDestination",
-								BindingFlags.NonPublic | BindingFlags.Instance,
-								null,
-								new[]
-								{
-									typeof (ushort),
-									typeof (CitizenInstance).MakeByRefType(),
-									typeof (bool)
-								},
-								null)));
-				} catch (Exception) {
-					Log.Error("Could not redirect HumanAI::ArriveAtDestination.");
 					detourFailed = true;
 				}
 
@@ -2455,7 +2415,6 @@ namespace TrafficManager {
 			RegisteredManagers.Add(CustomSegmentLightsManager.Instance);
 			RegisteredManagers.Add(ExtBuildingManager.Instance);
 			RegisteredManagers.Add(ExtCitizenInstanceManager.Instance);
-			RegisteredManagers.Add(ExtCitizenManager.Instance);
 			RegisteredManagers.Add(JunctionRestrictionsManager.Instance);
 			RegisteredManagers.Add(LaneArrowManager.Instance);
 			RegisteredManagers.Add(LaneConnectionManager.Instance);
@@ -2631,7 +2590,7 @@ namespace TrafficManager {
 
 			// add "remove vehicle" button
 			UIView.GetAView().gameObject.AddComponent<RemoveVehicleButtonExtender>();
-			
+
 			initDetours();
 
 			//Log.Info("Fixing non-created nodes with problems...");

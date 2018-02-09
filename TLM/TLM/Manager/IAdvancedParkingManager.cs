@@ -84,9 +84,8 @@ namespace TrafficManager.Manager {
 		/// </summary>
 		/// <param name="ret">status text to enrich</param>
 		/// <param name="extInstance">extended citizen instance data</param>
-		/// <param name="extCitizen">extended citizen data</param>
 		/// <returns></returns>
-		string EnrichLocalizedCitizenStatus(string ret, ref ExtCitizenInstance extInstance, ref ExtCitizen extCitizen);
+		string EnrichLocalizedCitizenStatus(string ret, ref ExtCitizenInstance extInstance);
 
 		/// <summary>
 		/// Adds Parking AI related information to the given passenger car status text.
@@ -104,7 +103,6 @@ namespace TrafficManager.Manager {
 		/// <param name="citizenInstanceId">citizen instance that shall be processed</param>
 		/// <param name="citizenInstance">citizen instance data</param>
 		/// <param name="extInstance">extended citizen instance data</param>
-		/// <param name="extCitizen">extended citizen data</param>
 		/// <param name="citizen">citizen data</param>
 		/// <param name="mainPathState">current state of the citizen instance's main path</param>
 		/// <returns>
@@ -113,9 +111,9 @@ namespace TrafficManager.Manager {
 		///		<code>Ready</code>: All paths are ready and path-find success must be handled.
 		///		<code>FailedHard</code>: At least one path calculation failed and the failure must be handled.
 		///		<code>FailedSoft</code>: Path-finding must be repeated.
-		///		<code>Ignore</code>: Default citizen behavior must be skipped. 
+		///		<code>Ignore</code>: Default citizen behavior must be skipped.
 		///	</returns>
-		ExtSoftPathState UpdateCitizenPathState(ushort citizenInstanceId, ref CitizenInstance citizenInstance, ref ExtCitizenInstance extInstance, ref ExtCitizen extCitizen, ref Citizen citizen, ExtPathState mainPathState);
+		ExtSoftPathState UpdateCitizenPathState(ushort citizenInstanceId, ref CitizenInstance citizenInstance, ref ExtCitizenInstance extInstance, ref Citizen citizen, ExtPathState mainPathState);
 
 		/// <summary>
 		/// Merges the current calculation states of the citizen's main path and return path (while driving a passenger car).
