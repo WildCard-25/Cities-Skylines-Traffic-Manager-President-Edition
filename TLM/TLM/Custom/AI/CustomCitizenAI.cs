@@ -88,7 +88,7 @@ namespace TrafficManager.Custom.AI {
 								if (GlobalConfig.Instance.Debug.Switches[4])
 									Log._Debug($"CustomCitizenAI.ExtStartPathFind({instanceID}): Citizen has CurrentPathMode={extInstance.pathMode}.  Change to 'RequiresCarPath'.");
 #endif
-	
+
 								extInstance.pathMode = ExtPathMode.RequiresCarPath;
 							}
 							break;
@@ -124,7 +124,7 @@ namespace TrafficManager.Custom.AI {
 						 * citizen travels back home
 						 * -> check if their car should be returned
 						 */
-						if ((extCitizen.lastTransportMode | ExtCitizen.ExtTransportMode.Car) != ExtCitizen.ExtTransportMode.None) {
+						if ((extCitizen.lastTransportMode & ExtCitizen.ExtTransportMode.Car) != ExtCitizen.ExtTransportMode.None) {
 							/*
 							 * citizen travelled by car
 							 * -> return car back home
@@ -249,7 +249,7 @@ namespace TrafficManager.Custom.AI {
 					// NON-STOCK CODE END
 				}
 			}
-			
+
 			// NON-STOCK CODE START
 			ExtPathType extPathType = ExtPathType.None;
 			PathUnit.Position endPosA = default(PathUnit.Position);
@@ -329,7 +329,7 @@ namespace TrafficManager.Custom.AI {
 
 			/*
 			 * enable random parking if exact parking space was not calculated yet
-			 */ 
+			 */
 			if (extVehicleType == ExtVehicleType.PassengerCar) {
 				if (allowRandomParking && instanceData.m_targetBuilding != 0 && Singleton<BuildingManager>.instance.m_buildings.m_buffer[instanceData.m_targetBuilding].Info.m_class.m_service > ItemClass.Service.Office) {
 					randomParking = true;
@@ -354,7 +354,7 @@ namespace TrafficManager.Custom.AI {
 
 			/*
 			 * determine start & end path positions
-			 */ 
+			 */
 			bool foundEndPos = !calculateEndPos || FindPathPosition(instanceID, ref instanceData, endPos, Options.prohibitPocketCars && (instanceData.m_targetBuilding == 0 || (Singleton<BuildingManager>.instance.m_buildings.m_buffer[instanceData.m_targetBuilding].m_flags & Building.Flags.IncomingOutgoing) == Building.Flags.None) ? NetInfo.LaneType.Pedestrian : (laneTypes | NetInfo.LaneType.Pedestrian), vehicleTypes, false, out endPosA); // NON-STOCK CODE: with Parking AI enabled, the end position must be a pedestrian position
 			bool foundStartPos = false;
 			PathUnit.Position startPosA;
