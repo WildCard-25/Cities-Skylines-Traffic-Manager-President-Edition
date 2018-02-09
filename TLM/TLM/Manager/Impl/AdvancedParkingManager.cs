@@ -877,7 +877,7 @@ namespace TrafficManager.Manager.Impl {
 			/*
 			 * relocate parked car if abandoned
 			 */
-			if (extInstance.pathMode == ExtPathMode.CalculatingWalkingPathToParkedCar) {
+			if (extInstance.pathMode == ExtPathMode.None || extInstance.pathMode == ExtPathMode.CalculatingWalkingPathToParkedCar) {
 				/*
 				 * parked car is unreachable
 				 */
@@ -893,21 +893,40 @@ namespace TrafficManager.Manager.Impl {
 						return true;
 					});
 
-					// calculate distance between citizen and parked car
+					/*
+					 * See if car needs to be moved
+					 */
 					bool movedCar = false;
 					Vector3 citizenPos = instanceData.GetLastFramePosition();
 					float parkedToCitizen = 0f;
 					Vector3 oldParkedVehiclePos = default(Vector3);
 					Services.VehicleService.ProcessParkedVehicle(parkedVehicleId, delegate (ushort parkedVehId, ref VehicleParked parkedVehicle) {
+						/*
+						 * Is car too far away for citizen to walk to
+						 */
 						oldParkedVehiclePos = parkedVehicle.m_position;
 						parkedToCitizen = (parkedVehicle.m_position - citizenPos).magnitude;
-						if (parkedToCitizen > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
-							/*
-							 * parked car is far away from current location
-							 * -> relocate parked car and try again
-							 */
-							movedCar = TryMoveParkedVehicle(parkedVehicleId, ref parkedVehicle, citizenPos, GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome, homeId);
+						if (parkedToCitizen > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding) {
+							if (homeId == 0) {
+								/*
+								 * citizen is a tourist
+								 * -> relocate parked car and try again
+								 */
+								movedCar = TryMoveParkedVehicle(parkedVehicleId, ref parkedVehicle, citizenPos, GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding, homeId);
+							} else {
+								/*
+								 * Is car also too far from home - abandoned
+								 */
+								float parkedToHome = (parkedVehicle.m_position - Singleton<BuildingManager>.instance.m_buildings.m_buffer[homeId].m_position).magnitude;
+								if (parkedToHome > GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome) {
+									/*
+									 * -> relocate parked car and try again
+									 */
+									movedCar = TryMoveParkedVehicle(parkedVehicleId, ref parkedVehicle, citizenPos, GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding, homeId);
+								}
+							}
 						}
+
 						return true;
 					});
 
