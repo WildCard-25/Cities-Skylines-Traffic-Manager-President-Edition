@@ -55,6 +55,21 @@ namespace TrafficManager.Custom.AI {
 #if BENCHMARK
 				}
 #endif
+				if (mainPathState == ExtPathState.Calculating && (vehicleData.m_flags & Vehicle.Flags.DummyTraffic) != 0) {
+#if DEBUG
+					if (GlobalConfig.Instance.Debug.Switches[3])
+						Log._Debug($"CustomCarAI.CustomSimulationStep({vehicleId}): Possible stuck vehicle detected. source={vehicleData.m_sourceBuilding}, target={vehicleData.m_targetBuilding}.");
+#endif
+					vehicleData.m_waitCounter += 1;
+					if (vehicleData.m_waitCounter > 1) {
+#if DEBUG
+						if (GlobalConfig.Instance.Debug.Switches[3])
+							Log._Debug($"CustomCarAI.CustomSimulationStep({vehicleId}): Stuck vehicle detected. Setting mainPathState to failed. source={vehicleData.m_sourceBuilding}, target={vehicleData.m_targetBuilding}.");
+#endif
+						mainPathState = ExtPathState.Failed;
+					}
+				}
+
 				// NON-STOCK CODE END
 
 				if (mainPathState == ExtPathState.Ready) {
