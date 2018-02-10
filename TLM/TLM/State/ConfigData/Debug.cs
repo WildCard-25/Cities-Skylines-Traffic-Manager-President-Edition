@@ -11,7 +11,7 @@ namespace TrafficManager.State.ConfigData {
 				false, // 0: path-find debug log
 				false, // 1: path-find costs debug log
 				false, // 2: parking ai debug log (basic)
-				false, // 3: do not actually repair stuck vehicles/cims, just report
+				false, // 3: repair stuck vehicles/cims
 				false, // 4: parking ai debug log (extended)
 				false, // 5: geometry debug log
 				false, // 6: debug parking AI distance issue

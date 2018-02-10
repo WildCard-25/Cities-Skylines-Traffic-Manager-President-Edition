@@ -43,9 +43,8 @@ namespace TrafficManager.Custom.AI {
 
 #if DEBUG
 				if (GlobalConfig.Instance.Debug.Switches[2])
-					Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Path={instanceData.m_path}, mainPathState={mainPathState}");
+					Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Path={instanceData.m_path}, mainPathState={mainPathState}, flags={instanceData.m_flags}, wait={instanceData.m_waitCounter}.");
 #endif
-
 				ExtSoftPathState finalPathState = ExtSoftPathState.None;
 #if BENCHMARK
 				using (var bm = new Benchmark(null, "ConvertPathStateToSoftPathState+UpdateCitizenPathState")) {
@@ -61,6 +60,25 @@ namespace TrafficManager.Custom.AI {
 #if BENCHMARK
 				}
 #endif
+
+				if (mainPathState == ExtPathState.Calculating && (instanceData.m_flags & (CitizenInstance.Flags.HangAround | CitizenInstance.Flags.OnPath)) == CitizenInstance.Flags.None) {
+					instanceData.m_waitCounter += 1;
+					if (instanceData.m_waitCounter > 1) {
+#if DEBUG
+						if (GlobalConfig.Instance.Debug.Switches[3])
+							Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Possible stuck citizen instance detected. source={instanceData.m_sourceBuilding}, target={instanceData.m_targetBuilding}.");
+#endif
+						BuildingManager buildingManager = Singleton<BuildingManager>.instance;
+						if ((buildingManager.m_buildings.m_buffer[instanceData.m_sourceBuilding].m_flags & Building.Flags.IncomingOutgoing) != Building.Flags.None &&
+								(buildingManager.m_buildings.m_buffer[instanceData.m_targetBuilding].m_flags & Building.Flags.IncomingOutgoing) != Building.Flags.None) {
+#if DEBUG
+							if (GlobalConfig.Instance.Debug.Switches[3])
+								Log._Debug($"CustomHumanAI.CustomSimulationStep({instanceID}): Stuck citizen instance detected. Setting finalPathState to failed. source={instanceData.m_sourceBuilding}, target={instanceData.m_targetBuilding}.");
+#endif
+							finalPathState = ExtSoftPathState.FailedHard;
+						}
+					}
+				}
 
 				switch (finalPathState) {
 					case ExtSoftPathState.Ready:
