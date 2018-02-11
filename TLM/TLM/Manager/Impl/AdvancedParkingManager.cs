@@ -1002,7 +1002,7 @@ namespace TrafficManager.Manager.Impl {
 #if BENCHMARK
 			using (var bm = new Benchmark(null, "FindParkingSpaceInVicinity")) {
 #endif
-			found = AdvancedParkingManager.Instance.FindParkingSpaceInVicinity(refPos, parkedVehicle.Info, homeId, 0, maxDistance, out parkingSpaceLocation, out parkingSpaceLocationId, out parkPos, out parkRot, out parkOffset);
+			found = AdvancedParkingManager.Instance.FindParkingSpaceInVicinity(refPos, parkedVehicle.Info, homeId, parkedVehicleId, maxDistance, false, out parkingSpaceLocation, out parkingSpaceLocationId, out parkPos, out parkRot, out parkOffset);
 #if BENCHMARK
 			}
 #endif
@@ -1039,7 +1039,7 @@ namespace TrafficManager.Manager.Impl {
 			float parkOffset;
 
 			// find a free parking space
-			bool success = FindParkingSpaceInVicinity(endPos, vehicleInfo, homeId, vehicleId, goingHome ? GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome : GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding, out knownParkingSpaceLocation, out knownParkingSpaceLocationId, out parkPos, out parkRot, out parkOffset);
+			bool success = FindParkingSpaceInVicinity(endPos, vehicleInfo, homeId, vehicleId, goingHome ? GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToHome : GlobalConfig.Instance.ParkingAI.MaxParkedCarDistanceToBuilding, true, out knownParkingSpaceLocation, out knownParkingSpaceLocationId, out parkPos, out parkRot, out parkOffset);
 
 			extDriverInstance.parkingSpaceLocation = knownParkingSpaceLocation;
 			extDriverInstance.parkingSpaceLocationId = knownParkingSpaceLocationId;
@@ -1201,7 +1201,7 @@ namespace TrafficManager.Manager.Impl {
 			return false;
 		}
 
-		public bool FindParkingSpaceInVicinity(Vector3 targetPos, VehicleInfo vehicleInfo, ushort homeId, ushort vehicleId, float maxDist, out ExtParkingSpaceLocation parkingSpaceLocation, out ushort parkingSpaceLocationId, out Vector3 parkPos, out Quaternion parkRot, out float parkOffset) {
+		public bool FindParkingSpaceInVicinity(Vector3 targetPos, VehicleInfo vehicleInfo, ushort homeId, ushort vehicleId, float maxDist, bool randomize, out ExtParkingSpaceLocation parkingSpaceLocation, out ushort parkingSpaceLocationId, out Vector3 parkPos, out Quaternion parkRot, out float parkOffset) {
 			// TODO check isElectric
 			Vector3 roadParkPos;
 			Quaternion roadParkRot;
@@ -1210,8 +1210,8 @@ namespace TrafficManager.Manager.Impl {
 			Quaternion buildingParkRot;
 			float buildingParkOffset;
 
-			ushort parkingSpaceSegmentId = FindParkingSpaceAtRoadSide(0, targetPos, vehicleInfo.m_generatedInfo.m_size.x, vehicleInfo.m_generatedInfo.m_size.z, maxDist, true, out roadParkPos, out roadParkRot, out roadParkOffset);
-			ushort parkingBuildingId = FindParkingSpaceBuilding(vehicleInfo, homeId, 0, 0, targetPos, maxDist, maxDist, true, out buildingParkPos, out buildingParkRot, out buildingParkOffset);
+			ushort parkingSpaceSegmentId = FindParkingSpaceAtRoadSide(vehicleId, targetPos, vehicleInfo.m_generatedInfo.m_size.x, vehicleInfo.m_generatedInfo.m_size.z, maxDist, randomize, out roadParkPos, out roadParkRot, out roadParkOffset);
+			ushort parkingBuildingId = FindParkingSpaceBuilding(vehicleInfo, homeId, vehicleId, 0, targetPos, maxDist, maxDist, randomize, out buildingParkPos, out buildingParkRot, out buildingParkOffset);
 
 			if (parkingSpaceSegmentId != 0) {
 				if (parkingBuildingId != 0) {

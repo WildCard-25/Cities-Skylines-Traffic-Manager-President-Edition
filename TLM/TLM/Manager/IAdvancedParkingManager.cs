@@ -236,13 +236,14 @@ namespace TrafficManager.Manager {
 		/// <param name="homeId">Home building id of the citizen (citizens are not allowed to park their car on foreign residential premises)</param>
 		/// <param name="vehicleId">Vehicle that shall be parked</param>
 		/// <param name="maxDist">maximum allowed distance between target position and parking space location</param>
+		/// <param name="randomize">If true, search is randomized such that not always only the closest parking space is selected.</param>
 		/// <param name="parkingSpaceLocation">identified parking space location type (only valid if method returns true)</param>
 		/// <param name="parkingSpaceLocationId">identified parking space location identifier (only valid if method returns true)</param>
 		/// <param name="parkPos">identified parking space position (only valid if method returns true)</param>
 		/// <param name="parkRot">identified parking space rotation (only valid if method returns true)</param>
 		/// <param name="parkOffset">identified parking space offset (only valid if method returns true)</param>
 		/// <returns>true if a parking space could be found, false otherwise</returns>
-		bool FindParkingSpaceInVicinity(Vector3 targetPos, VehicleInfo vehicleInfo, ushort homeId, ushort vehicleId, float maxDist, out ExtParkingSpaceLocation parkingSpaceLocation, out ushort parkingSpaceLocationId, out Vector3 parkPos, out Quaternion parkRot, out float parkOffset);
+		bool FindParkingSpaceInVicinity(Vector3 targetPos, VehicleInfo vehicleInfo, ushort homeId, ushort vehicleId, float maxDist, bool randomize, out ExtParkingSpaceLocation parkingSpaceLocation, out ushort parkingSpaceLocationId, out Vector3 parkPos, out Quaternion parkRot, out float parkOffset);
 
 		/// <summary>
 		/// Tries to find a parking space for a moving vehicle at a given segment. The search
